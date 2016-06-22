@@ -2,6 +2,7 @@ package com.example.jamiepatel.pusherchat;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,13 +30,14 @@ import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends ActionBarActivity implements View.OnKeyListener, View.OnClickListener {
 
-    final String MESSAGES_ENDPOINT = "http://pusher-chat-demo.herokuapp.com";
+//    final String MESSAGES_ENDPOINT = "http://pusher-chat-demo.herokuapp.com";
+    private static final String MESSAGES_ENDPOINT = "http://192.168.200.75:8000";
 
     MessageAdapter messageAdapter;
     EditText messageInput;
     Button sendButton;
     String username;
-
+    private static final String TAG = "MainActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +56,7 @@ public class MainActivity extends ActionBarActivity implements View.OnKeyListene
         final ListView messagesView = (ListView) findViewById(R.id.messages_view);
         messagesView.setAdapter(messageAdapter);
 
-        Pusher pusher = new Pusher("faa685e4bb3003eb825c");
+        Pusher pusher = new Pusher("48de0cfc2a99f7af4e12");
 
         pusher.connect();
 
@@ -63,6 +65,7 @@ public class MainActivity extends ActionBarActivity implements View.OnKeyListene
         channel.bind("new_message", new SubscriptionEventListener() {
             @Override
             public void onEvent(String channelName, String eventName, final String data) {
+                Log.d(TAG, "onEvent() called with: " + "channelName = [" + channelName + "], eventName = [" + eventName + "], data = [" + data + "]");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -127,7 +130,7 @@ public class MainActivity extends ActionBarActivity implements View.OnKeyListene
 
         AsyncHttpClient client = new AsyncHttpClient();
 
-        client.post(MESSAGES_ENDPOINT + "/messages", params, new JsonHttpResponseHandler(){
+        client.post(MESSAGES_ENDPOINT + "/users/messages", params, new JsonHttpResponseHandler(){
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
